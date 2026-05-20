@@ -21,7 +21,7 @@
 
 use core::fmt;
 
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
 
 /// Possible types of algorithms that can exist in an "alg" descriptor.
 ///
@@ -33,6 +33,17 @@ use serde::{Deserialize, Serialize};
 pub enum Algorithm {
     /// Algorithms used for digital signatures and MACs
     Signing(Signing),
+    /// Fallback to allow parsing keys that are not signing keys
+    #[serde(deserialize_with = "deserialize_ignore_any")]
+    Unknown
+}
+
+/// Deserialize any value, ignore it, and return the default value for the type being deserialized.
+/// Vendored from serde_with.
+pub fn deserialize_ignore_any<'de, D: Deserializer<'de>, T: Default>(
+    deserializer: D,
+) -> Result<T, D::Error> {
+    serde::de::IgnoredAny::deserialize(deserializer).map(|_| T::default())
 }
 
 impl From<Signing> for Algorithm {
