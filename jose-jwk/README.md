@@ -42,6 +42,19 @@ let keys = serde_json::json!({
             "e": "AQAB",
             "alg": "RS256",
             "kid": "some-rsa-kid"
+        },
+        {
+            "kid": "ViDStG9DsV1FjFyghOtS9B9HVUz2L63bJQcsHuRC694",
+            "kty": "RSA",
+            "alg": "RSA-OAEP",
+            "use": "enc",
+            "n": "liCFa57BWN2J6sSqlYuzVdndZ8xvvaRbAjqhUVc4B4p_8E3txh0IYrGOssafhHL4RLHiCT-YC19GxpSUCkS-Iy0aBMLei5jOmA5eOSpsX9wsWSxEXT49NCKECts4szwAcmUwsRMLaov3lxjYqCfvV83zclh2g8yMvx9VIl5si30GfEW3zHvv23gM8d5mtk-VTNAPVGOBSJjnb4rTeq_yypMe_j15mhkj_t9wMF35AqgZSkG209TQqwXFBLRpuyso3O8HMS3eyVbTz_ayijk1htkbjzqMEzZxXk8b5mv8K7y1yWIcaTZtF5Md287h4bFAqqgynUJcwbdz4fdaUcy1Dw",
+            "e": "AQAB",
+            "x5c": [
+                "MIICqTCCAZECBgGAiQoxCzANBgkqhkiG9w0BAQsFADAYMRYwFAYDVQQDDA1vcGVuYW5hbHl0aWNzMB4XDTIyMDUwMzA4MjgwOFoXDTMyMDUwMzA4Mjk0OFowGDEWMBQGA1UEAwwNb3BlbmFuYWx5dGljczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJYghWuewVjdierEqpWLs1XZ3WfMb72kWwI6oVFXOAeKf/BN7cYdCGKxjrLGn4Ry+ESx4gk/mAtfRsaUlApEviMtGgTC3ouYzpgOXjkqbF/cLFksRF0+PTQihArbOLM8AHJlMLETC2qL95cY2Kgn71fN83JYdoPMjL8fVSJebIt9BnxFt8x779t4DPHeZrZPlUzQD1RjgUiY52+K03qv8sqTHv49eZoZI/7fcDBd+QKoGUpBttPU0KsFxQS0absrKNzvBzEt3slW08/2soo5NYbZG486jBM2cV5PG+Zr/Cu8tcliHGk2bReTHdvO4eGxQKqoMp1CXMG3c+H3WlHMtQ8CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAOHVjQoR/R//dOWaLcK5I8ZU2qVWaRLjhoBdB5cJn25XjxweIqsS07hr+tWTM9lpERRvnaRkFDKxjVhOwvjHA/wxDG3wgVVFgj+BSYXiYJm7RswPmC4tQSIYR7PyY7ypOoQlYKe+OdO9kEMPdaJnY+BhuJK3qI4xaZTlsKU76v2ExdQfnZ/llalrmrBvTFdL6B85LT2j6iDsMcPE2zEAn7Y02caxEqnbRlo7/XbjgMdwnO3rY9xJpQwY4KIyGck++VDwpdxt/J9JTXq0093S1L+assAMDFXdnQSXc4iC6aiJTlSSNsYhDQN8CWTm5gfNhQ3XkncMjXE93I/H7fvvwEA=="
+            ],
+            "x5t": "pNg144F5r2wkRBUXaMyt7AQx5EQ",
+            "x5t#S256": "2pE4kmHUD8HKM5M0jyiwJbZJJnvu36P35cU3T8Zb9ms"
         }
     ]
 });
@@ -49,9 +62,11 @@ let keys = serde_json::json!({
 let jwkset: JwkSet = serde_json::from_value(keys).unwrap();
 let ec_jwk: &Jwk = &jwkset.keys[0];
 let rsa_jwk: &Jwk = &jwkset.keys[1];
+let rsa_enc: &Jwk = &jwkset.keys[2];
 
 assert!(matches!(ec_jwk.key, Key::Ec(_)));
 assert!(matches!(rsa_jwk.key, Key::Rsa(_)));
+assert!(matches!(rsa_enc.prm.alg, Some(Algorithm::Unknown)));
 
 assert_eq!(ec_jwk.prm.kid, Some(String::from("some-ec-kid")));
 assert_eq!(rsa_jwk.prm.kid, Some(String::from("some-rsa-kid")));
@@ -72,8 +87,8 @@ version bump.
 
 Licensed under either of:
 
-* [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
-* [MIT license](http://opensource.org/licenses/MIT)
+- [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+- [MIT license](http://opensource.org/licenses/MIT)
 
 at your option.
 
@@ -83,8 +98,7 @@ Unless you explicitly state otherwise, any contribution intentionally submitted
 for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
 dual licensed as above, without any additional terms or conditions.
 
-[//]: # (badges)
-
+[//]: # "badges"
 [crate-image]: https://img.shields.io/crates/v/jose-jwk
 [crate-link]: https://crates.io/crates/jose-jwk
 [docs-image]: https://docs.rs/jose-jwk/badge.svg
@@ -95,9 +109,7 @@ dual licensed as above, without any additional terms or conditions.
 [chat-link]: https://rustcrypto.zulipchat.com/#narrow/stream/300570-formats
 [build-image]: https://github.com/RustCrypto/JOSE/actions/workflows/jose-jwk.yml/badge.svg
 [build-link]: https://github.com/RustCrypto/JOSE/actions/workflows/jose-jwk.yml
-
-[//]: # (links)
-
+[//]: # "links"
 [RustCrypto]: https://github.com/RustCrypto/
 [JWK]: https://jose.readthedocs.io/en/latest/#jwk
 [JOSE]: https://jose.readthedocs.io/

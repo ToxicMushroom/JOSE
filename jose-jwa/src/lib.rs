@@ -21,7 +21,7 @@
 
 use core::fmt;
 
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
 
 /// Possible types of algorithms that can exist in an "alg" descriptor.
 ///
@@ -33,6 +33,41 @@ use serde::{Deserialize, Serialize};
 pub enum Algorithm {
     /// Algorithms used for digital signatures and MACs
     Signing(Signing),
+    /// Fallback to allow parsing keys that are not signing keys
+    #[serde(deserialize_with = "deserialize_ignore_any")]
+    Unknown
+}
+
+
+/// Deserialize any value, ignore it, and return the default value for the type being deserialized.
+///
+/// This function can be used in two different ways:
+///
+/// 1. It is useful for instance to create an enum with a catch-all variant that will accept any incoming data.
+/// 2. [`untagged`] enum representations do not allow the `other` annotation as the fallback enum variant.
+///    With this function you can emulate an `other` variant, which can deserialize any data carrying enum.
+///
+/// **Note:** Using this function will prevent deserializing data-less enum variants.
+/// If this is a problem depends on the data format.
+/// For example, deserializing `"Bar"` as an enum in JSON would fail, since it carries no data.
+///
+/// # Examples
+///
+/// ## Deserializing a heterogeneous collection of XML nodes
+///
+/// When [`serde-xml-rs`] deserializes an XML tag to an enum, it always maps the tag
+/// name to the enum variant name, and the tag attributes and children to the enum contents.
+/// This means that in order for an enum variant to accept any XML tag, it both has to use
+/// `#[serde(other)]` to accept any tag name, and `#[serde(deserialize_with = "deserialize_ignore_any")]`
+/// to accept any attributes and children.
+///
+///
+/// [`serde-xml-rs`]: https://docs.rs/serde-xml-rs
+/// [`untagged`]: https://serde.rs/enum-representations.html#untagged
+pub fn deserialize_ignore_any<'de, D: Deserializer<'de>, T: Default>(
+    deserializer: D,
+) -> Result<T, D::Error> {
+    serde::de::IgnoredAny::deserialize(deserializer).map(|_| T::default())
 }
 
 impl From<Signing> for Algorithm {
