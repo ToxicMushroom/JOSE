@@ -23,8 +23,8 @@ crypto = ["p256", "p384", "p521", "k256", "rsa"]
 legacy = ["dep:base64ct", "dep:elliptic-curve", "dep:serde_json", "dep:serdect", "dep:subtle"]
 
 [dependencies]
-jose-b64 = { version = "=0.2.0-pre", default-features = false, features = ["secret"] }
-jose-jwa = { version = "=0.2.0-pre" }
+jose-b64 = { path = "../jose-b64", default-features = false, features = ["secret"] }
+jose-jwa = { path = "../jose-jwa" }
 serde = { version = "1", default-features = false, features = ["alloc", "derive"] }
 zeroize = { version = "1.8.1", default-features = false, features = ["alloc"] }
 

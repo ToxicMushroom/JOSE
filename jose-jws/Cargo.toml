@@ -18,9 +18,9 @@ edition = "2024"
 rust-version = "1.85"
 
 [dependencies]
-jose-b64 = { version = "=0.2.0-pre", default-features = false, features = ["json"] }
-jose-jwa = { version = "=0.2.0-pre" }
-jose-jwk = { version = "=0.2.0-pre", default-features = false }
+jose-b64 = { path = "../jose-b64", default-features = false, features = ["json"] }
+jose-jwa = { path = "../jose-jwa" }
+jose-jwk = { path = "../jose-jwk", default-features = false }
 serde = { version = "1.0.185", default-features = false, features = ["alloc", "derive"] }
 serde_json = { version = "1.0.96", default-features = false }
 rand_core = { version = "0.9", default-features = false }
